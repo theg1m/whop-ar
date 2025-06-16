@@ -1,41 +1,98 @@
 // pages/login.js
+import { useState } from 'react';
 import MainLayout from '../components/Layout/MainLayout';
+import Link from 'next/link';
+import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { useRouter } from 'next/router'; // Import useRouter for redirection
 
 export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({});
+  const { login } = useAuth(); // Get login function from AuthContext
+  const router = useRouter(); // Initialize router
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!email) {
+      newErrors.email = 'البريد الإلكتروني مطلوب.';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'صيغة البريد الإلكتروني غير صحيحة.';
+    }
+    if (!password) {
+      newErrors.password = 'كلمة المرور مطلوبة.';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => { // Make handleSubmit async if login involves async ops
+    e.preventDefault();
+    if (validateForm()) {
+      console.log('Login Credentials:', { email, password });
+      // Simulate API call or actual login logic
+      // For now, we directly call the context's login function
+      // In a real app, you might pass actual user data from an API response
+      login({ name: email.split('@')[0], role: 'creator' }); // Pass some dummy user data
+
+      // alert('تم تسجيل الدخول بنجاح (محاكاة).'); // Optional: remove if redirect is enough
+      router.push('/profile'); // Redirect to profile page on successful login
+    }
+  };
+
   return (
     <MainLayout>
-      <div className="max-w-md mx-auto mt-10 bg-white p-8 rounded-xl shadow-xl">
-        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">تسجيل الدخول</h1>
-        <form>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-              البريد الإلكتروني
+      <div className="max-w-md mx-auto mt-8 mb-8 bg-white p-8 rounded-xl shadow-2xl">
+        <h1 className="text-3xl font-bold text-center text-indigo-700 mb-8">تسجيل الدخول</h1>
+        <form onSubmit={handleSubmit} noValidate>
+          {/* Email Input */}
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="email">
+              البريد الإلكتروني <span className="text-red-500">*</span>
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className={`shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 ${errors.email ? 'border-red-500 ring-red-500' : 'border-gray-300'}`}
               id="email"
               type="email"
               placeholder="user@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-describedby="emailError"
             />
+            {errors.email && <p id="emailError" className="text-red-500 text-xs italic mt-2">{errors.email}</p>}
           </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-              كلمة المرور
+          {/* Password Input */}
+          <div className="mb-8">
+            <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="password">
+              كلمة المرور <span className="text-red-500">*</span>
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              className={`shadow-sm appearance-none border rounded w-full py-3 px-4 text-gray-700 mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 ${errors.password ? 'border-red-500 ring-red-500' : 'border-gray-300'}`}
               id="password"
               type="password"
               placeholder="******************"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              aria-describedby="passwordError"
             />
+            {errors.password && <p id="passwordError" className="text-red-500 text-xs italic mt-2">{errors.password}</p>}
           </div>
-          <div className="flex items-center justify-between">
+          {/* Submit Button */}
+          <div className="flex items-center justify-between mb-6">
             <button
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-              type="button" // Change to type="submit" when form handling is implemented
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:shadow-outline w-full transition-colors duration-150"
+              type="submit"
             >
               دخول
             </button>
+          </div>
+          {/* Link to Register Page */}
+          <div className="text-center">
+            <Link href="/register" legacyBehavior>
+              <a className="font-medium text-indigo-600 hover:text-indigo-500">
+                ليس لديك حساب؟ إنشاء حساب جديد
+              </a>
+            </Link>
           </div>
         </form>
       </div>
