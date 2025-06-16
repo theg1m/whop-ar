@@ -30,13 +30,15 @@ export default function LoginPage() {
     e.preventDefault();
     if (validateForm()) {
       console.log('Login Credentials:', { email, password });
-      // Simulate API call or actual login logic
-      // For now, we directly call the context's login function
-      // In a real app, you might pass actual user data from an API response
-      login({ name: email.split('@')[0], role: 'creator' }); // Pass some dummy user data
-
-      // alert('تم تسجيل الدخول بنجاح (محاكاة).'); // Optional: remove if redirect is enough
-      router.push('/profile'); // Redirect to profile page on successful login
+      // Simulate API call; for now, pass a role.
+      // In a real app, the API response would include the user's role.
+      login({
+        name: email.split('@')[0],
+        email: email, // Good to store email in context too
+        role: 'creator' // Defaulting to 'creator' for simulation.
+                       // Could be 'advertiser' for testing advertiser flows.
+      });
+      router.push('/profile');
     }
   };
 

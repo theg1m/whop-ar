@@ -10,8 +10,16 @@ export const AuthProvider = ({ children }) => {
   // Simulate login
   const login = (userData) => {
     setIsAuthenticated(true);
-    setUser(userData || { name: 'مستخدم تجريبي', role: 'creator' }); // Dummy user data
-    console.log('AuthContext: User logged in', userData);
+    // Ensure userData has a role, or provide a default.
+    // If userData itself is null/undefined, default to a guest-like creator.
+    const defaultUser = { name: 'مستخدم تجريبي', email: '', role: 'creator' };
+    const loggedInUser = {
+      name: userData?.name || defaultUser.name,
+      email: userData?.email || '', // Store email if provided
+      role: userData?.role || defaultUser.role,
+    };
+    setUser(loggedInUser);
+    console.log('AuthContext: User logged in', loggedInUser);
   };
 
   // Simulate logout
