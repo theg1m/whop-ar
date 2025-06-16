@@ -30,15 +30,28 @@ export default function LoginPage() {
     e.preventDefault();
     if (validateForm()) {
       console.log('Login Credentials:', { email, password });
-      // Simulate API call; for now, pass a role.
-      // In a real app, the API response would include the user's role.
+      console.log('Login Credentials:', { email, password });
+
+      // Determine role for simulation:
+      // For testing Advertiser Dashboard, change 'creator' to 'advertiser'
+      // In a real app, the API response would include the user's actual role.
+      const simulatedRole = 'advertiser'; // <-- TEMPORARILY SET TO 'advertiser' FOR TESTING
+                                       // CHANGE BACK TO 'creator' or make dynamic for other tests
+
       login({
-        name: email.split('@')[0],
-        email: email, // Good to store email in context too
-        role: 'creator' // Defaulting to 'creator' for simulation.
-                       // Could be 'advertiser' for testing advertiser flows.
+        name: email.split('@')[0] + ` (${simulatedRole})`, // Add role to name for easy visual check
+        email: email,
+        role: simulatedRole
       });
-      router.push('/profile');
+
+      // Redirect based on role, or to a general dashboard / profile first
+      if (simulatedRole === 'advertiser') {
+        router.push('/advertiser-hub');
+      } else if (simulatedRole === 'creator') {
+        router.push('/creator-hub');
+      } else {
+        router.push('/profile');
+      }
     }
   };
 
