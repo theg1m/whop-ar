@@ -1,0 +1,11 @@
+/* styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Basic RTL support for body - can be enhanced with html dir attribute */
+body {
+  direction: rtl; /* Default to RTL for Arabic first */
+}
+/* Example: if you have a class or attribute to switch to LTR */
+/* body[dir="ltr"] { direction: ltr; } */
